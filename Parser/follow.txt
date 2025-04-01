@@ -1,0 +1,67 @@
+ActParamList	{')'}
+ActParamMore	{')'}
+AddOp	{'INTC', 'ID', '('}
+ArrayType	{'ID', ';'}
+AssCall	{'ELSE', 'ENDWH', 'END', 'FI', ';'}
+AssignmentRest	{'ELSE', 'ENDWH', 'END', 'FI', ';'}
+BaseType	{'ID', ';'}
+CallStmRest	{'ELSE', 'ENDWH', 'END', 'FI', ';'}
+CmpOp	{'INTC', 'ID', '('}
+ConditionalStm	{'ELSE', 'ENDWH', 'END', 'FI', ';'}
+DeclarePart	{'BEGIN'}
+Exp	{'THEN', '=', 'FI', ',', 'ELSE', 'ENDWH', ')', 'DO', '<', ']', ';', 'END'}
+Factor	{'THEN', '*', '-', 'ENDWH', 'DO', ')', 'END', ']', '+', ';', '<', '=', ',', 'ELSE', '/', 'FI'}
+FidMore	{')', ';'}
+FieldDecList	{'END'}
+FieldDecMore	{'END'}
+FieldVar	{'THEN', '/', '*', '-', 'ENDWH', ')', 'DO', 'END', ']', '+', ';', '=', ',', ':=', 'ELSE', '<', 'FI'}
+FieldVarMore	{'THEN', '/', '*', '-', 'ENDWH', ')', 'DO', 'END', ']', '+', ';', '=', ',', ':=', 'ELSE', '<', 'FI'}
+FormList	{')', ';'}
+IdList	{';'}
+IdMore	{';'}
+InputStm	{'ELSE', 'ENDWH', 'END', 'FI', ';'}
+Invar	{')'}
+LoopStm	{'ELSE', 'ENDWH', 'END', 'FI', ';'}
+Low	{'..'}
+MultOp	{'INTC', 'ID', '('}
+OtherFactor	{'THEN', '-', 'ENDWH', 'DO', ')', 'END', ']', '+', ';', '=', ',', 'ELSE', '<', 'FI'}
+OtherRelE	{'DO', 'THEN'}
+OtherTerm	{'THEN', 'ENDWH', 'DO', ')', 'END', ']', ';', '=', ',', 'ELSE', '<', 'FI'}
+OutputStm	{'ELSE', 'ENDWH', 'END', 'FI', ';'}
+Param	{')', ';'}
+ParamDecList	{')'}
+ParamList	{')'}
+ParamMore	{')'}
+ProcBody	{'BEGIN', 'PROCEDURE'}
+ProcDec	{'BEGIN'}
+ProcDecMore	{'BEGIN'}
+ProcDecPart	{'BEGIN'}
+ProcDeclaration	{'BEGIN'}
+ProcName	{'('}
+Program	{'#'}
+ProgramBody	{'.', 'BEGIN', 'PROCEDURE'}
+ProgramHead	{'BEGIN', 'TYPE', 'PROCEDURE', 'VAR'}
+ProgramName	{'TYPE', 'PROCEDURE', 'VAR', 'BEGIN'}
+RecType	{'ID', ';'}
+RelExp	{'DO', 'THEN'}
+ReturnStm	{'ELSE', 'ENDWH', 'END', 'FI', ';'}
+Stm	{'ELSE', 'ENDWH', 'END', 'FI', ';'}
+StmList	{'ELSE', 'ENDWH', 'END', 'FI'}
+StmMore	{'ELSE', 'ENDWH', 'END', 'FI'}
+StructureType	{'ID', ';'}
+Term	{'THEN', '-', 'ENDWH', ')', 'DO', 'END', ']', '+', ';', '=', ',', 'ELSE', '<', 'FI'}
+Top	{']'}
+TypeDec	{'BEGIN', 'PROCEDURE', 'VAR'}
+TypeDecList	{'BEGIN', 'PROCEDURE', 'VAR'}
+TypeDecMore	{'BEGIN', 'PROCEDURE', 'VAR'}
+TypeDeclaration	{'BEGIN', 'PROCEDURE', 'VAR'}
+TypeId	{'='}
+TypeName	{'ID', ';'}
+VarDec	{'BEGIN', 'PROCEDURE'}
+VarDecList	{'BEGIN', 'PROCEDURE'}
+VarDecMore	{'BEGIN', 'PROCEDURE'}
+VarDeclaration	{'BEGIN', 'PROCEDURE'}
+VarIdList	{';'}
+VarIdMore	{';'}
+VariMore	{'THEN', '/', '*', '-', 'ENDWH', ')', 'DO', 'END', ']', '+', ';', '=', ',', ':=', 'ELSE', '<', 'FI'}
+Variable	{'THEN', '*', '-', 'ENDWH', 'DO', ')', 'END', ']', '+', ';', '<', '=', ',', 'ELSE', '/', 'FI'}

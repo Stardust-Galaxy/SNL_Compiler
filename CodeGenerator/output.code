@@ -1,0 +1,23 @@
+PROGRAM p
+# Type t1 declaration
+VAR v1
+VAR v2
+PROC q
+# Parameters:
+PARAM ctmd
+VAR c
+VAR a
+a := v1
+WRITE a
+END_PROC q
+READ v1
+t0 := v1 < 10
+IF_FALSE t0 GOTO L0
+t1 := v1 + 10
+v1 := t1
+GOTO L1
+L0:
+t2 := v1 - 10
+v1 := t2
+L1:
+CALL q(c)

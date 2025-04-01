@@ -1,0 +1,15 @@
+digraph symTable {
+	graph [rankdir=LR]
+	node [shape=record]
+	INTEGER [label="{1|INTEGER}"]
+	element:typePtr0 -> INTEGER
+	INTEGER [label="{1|INTEGER}"]
+	element:typePtr1 -> INTEGER
+	INTEGER [label="{1|INTEGER}"]
+	element:typePtr2 -> INTEGER
+	element:paramList0 -> paramList0
+	INTEGER [label="{1|INTEGER}"]
+	paramList0:typePtr3 -> INTEGER
+	paramList0 [label="{ctmd|varDec|<typePtr3>type}"]
+	element [label="{t1|typeDec|<typePtr0>type}|{v1|varDec|<typePtr1>type}|{v2|varDec|<typePtr2>type}|{q|procDec|<paramList0> paramList}"]
+}
