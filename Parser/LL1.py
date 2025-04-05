@@ -464,7 +464,7 @@ def display(root):
 
 if __name__ == "__main__":
     tokens = open(
-        "../Lexer/testalltwo-Lexer.txt", "r"
+        "../Lexer/bubble-Lexer.txt", "r"
     ).readlines()
     root = generateAST(tokens)
     display(root)

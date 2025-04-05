@@ -1,33 +1,33 @@
 ActParamList	{')'}
 ActParamMore	{')'}
-AddOp	{'ID', 'INTC', '('}
+AddOp	{'INTC', '(', 'ID'}
 ArrayType	{';', 'ID'}
-AssCall	{'END', 'FI', ';', 'ENDWH', 'ELSE'}
-AssignmentRest	{'END', 'FI', ';', 'ENDWH', 'ELSE'}
+AssCall	{'ELSE', ';', 'ENDWH', 'FI', 'END'}
+AssignmentRest	{'ELSE', ';', 'ENDWH', 'FI', 'END'}
 BaseType	{';', 'ID'}
-CallStmRest	{'END', 'FI', ';', 'ENDWH', 'ELSE'}
-CmpOp	{'ID', 'INTC', '('}
-ConditionalStm	{'END', 'FI', ';', 'ENDWH', 'ELSE'}
+CallStmRest	{'ELSE', ';', 'ENDWH', 'FI', 'END'}
+CmpOp	{'INTC', '(', 'ID'}
+ConditionalStm	{'ELSE', ';', 'ENDWH', 'FI', 'END'}
 DeclarePart	{'BEGIN'}
-Exp	{'DO', '<', 'END', 'FI', ';', ']', '=', 'ENDWH', 'THEN', ',', ')', 'ELSE'}
-Factor	{'DO', '<', ';', 'THEN', '/', '-', '+', 'END', 'FI', 'ELSE', ']', '=', ',', 'ENDWH', ')', '*'}
+Exp	{'FI', ']', 'DO', 'ELSE', 'THEN', '<', ';', 'ENDWH', '=', 'END', ',', ')'}
+Factor	{'/', 'THEN', '<', ';', '-', 'END', ',', 'FI', ']', 'DO', 'ELSE', '*', '+', 'ENDWH', '=', ')'}
 FidMore	{';', ')'}
 FieldDecList	{'END'}
 FieldDecMore	{'END'}
-FieldVar	{'DO', '<', ';', ':=', 'THEN', '/', '-', '+', 'END', 'FI', 'ELSE', ']', '=', ',', 'ENDWH', ')', '*'}
-FieldVarMore	{'DO', '<', ';', ':=', 'THEN', '/', '-', '+', 'END', 'FI', 'ELSE', ']', '=', ',', 'ENDWH', ')', '*'}
+FieldVar	{'THEN', '<', ';', '-', ':=', 'END', ',', 'FI', ']', 'DO', ')', 'ELSE', '*', '+', 'ENDWH', '=', '/'}
+FieldVarMore	{'THEN', '<', ';', '-', ':=', 'END', ',', 'FI', ']', 'DO', ')', 'ELSE', '*', '+', 'ENDWH', '=', '/'}
 FormList	{';', ')'}
 IdList	{';'}
 IdMore	{';'}
-InputStm	{'END', 'FI', ';', 'ENDWH', 'ELSE'}
+InputStm	{'ELSE', ';', 'ENDWH', 'FI', 'END'}
 Invar	{')'}
-LoopStm	{'END', 'FI', ';', 'ENDWH', 'ELSE'}
+LoopStm	{'ELSE', ';', 'ENDWH', 'FI', 'END'}
 Low	{'..'}
-MultOp	{'ID', 'INTC', '('}
-OtherFactor	{'DO', '<', ';', 'THEN', '-', '+', 'END', 'FI', ']', '=', ',', 'ENDWH', ')', 'ELSE'}
+MultOp	{'INTC', '(', 'ID'}
+OtherFactor	{'THEN', '<', ';', '-', 'END', ',', 'FI', ']', 'DO', 'ELSE', '+', 'ENDWH', '=', ')'}
 OtherRelE	{'DO', 'THEN'}
-OtherTerm	{'DO', '<', ';', 'THEN', 'END', 'FI', ']', '=', ',', 'ENDWH', ')', 'ELSE'}
-OutputStm	{'END', 'FI', ';', 'ENDWH', 'ELSE'}
+OtherTerm	{'THEN', '<', ';', 'END', ',', 'FI', ']', 'DO', 'ELSE', 'ENDWH', '=', ')'}
+OutputStm	{'ELSE', ';', 'ENDWH', 'FI', 'END'}
 Param	{';', ')'}
 ParamDecList	{')'}
 ParamList	{')'}
@@ -39,22 +39,22 @@ ProcDecPart	{'BEGIN'}
 ProcDeclaration	{'BEGIN'}
 ProcName	{'('}
 Program	{'#'}
-ProgramBody	{'.', 'BEGIN', 'PROCEDURE'}
-ProgramHead	{'VAR', 'BEGIN', 'PROCEDURE', 'TYPE'}
-ProgramName	{'VAR', 'BEGIN', 'PROCEDURE', 'TYPE'}
+ProgramBody	{'PROCEDURE', '.', 'BEGIN'}
+ProgramHead	{'PROCEDURE', 'VAR', 'TYPE', 'BEGIN'}
+ProgramName	{'PROCEDURE', 'VAR', 'TYPE', 'BEGIN'}
 RecType	{';', 'ID'}
 RelExp	{'DO', 'THEN'}
-ReturnStm	{'END', 'FI', ';', 'ENDWH', 'ELSE'}
-Stm	{'ENDWH', 'END', 'FI', ';', 'ELSE'}
-StmList	{'FI', 'END', 'ENDWH', 'ELSE'}
-StmMore	{'END', 'FI', 'ENDWH', 'ELSE'}
+ReturnStm	{'ELSE', ';', 'ENDWH', 'FI', 'END'}
+Stm	{';', 'ENDWH', 'END', 'FI', 'ELSE'}
+StmList	{'ENDWH', 'FI', 'END', 'ELSE'}
+StmMore	{'ELSE', 'ENDWH', 'FI', 'END'}
 StructureType	{';', 'ID'}
-Term	{'DO', '<', ';', 'THEN', '-', '+', 'END', 'FI', ']', '=', ',', 'ENDWH', ')', 'ELSE'}
+Term	{'THEN', '<', ';', '-', 'END', ',', 'FI', ']', 'DO', 'ELSE', '+', 'ENDWH', '=', ')'}
 Top	{']'}
-TypeDec	{'VAR', 'PROCEDURE', 'BEGIN'}
-TypeDecList	{'VAR', 'BEGIN', 'PROCEDURE'}
-TypeDecMore	{'VAR', 'BEGIN', 'PROCEDURE'}
-TypeDeclaration	{'VAR', 'BEGIN', 'PROCEDURE'}
+TypeDec	{'PROCEDURE', 'VAR', 'BEGIN'}
+TypeDecList	{'PROCEDURE', 'VAR', 'BEGIN'}
+TypeDecMore	{'PROCEDURE', 'VAR', 'BEGIN'}
+TypeDeclaration	{'PROCEDURE', 'VAR', 'BEGIN'}
 TypeId	{'='}
 TypeName	{';', 'ID'}
 VarDec	{'PROCEDURE', 'BEGIN'}
@@ -63,5 +63,5 @@ VarDecMore	{'PROCEDURE', 'BEGIN'}
 VarDeclaration	{'PROCEDURE', 'BEGIN'}
 VarIdList	{';'}
 VarIdMore	{';'}
-VariMore	{'DO', '<', ';', ':=', 'THEN', '/', '-', '+', 'END', 'FI', 'ELSE', ']', '=', ',', 'ENDWH', ')', '*'}
-Variable	{'DO', '<', ';', 'THEN', '/', '-', '+', 'END', 'FI', 'ELSE', ']', '=', ',', 'ENDWH', ')', '*'}
+VariMore	{'THEN', '<', ';', '-', ':=', 'END', ',', 'FI', ']', 'DO', ')', 'ELSE', '*', '+', 'ENDWH', '=', '/'}
+Variable	{'/', 'THEN', '<', ';', '-', 'END', ',', 'FI', ']', 'DO', 'ELSE', '*', '+', 'ENDWH', '=', ')'}

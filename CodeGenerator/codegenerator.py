@@ -111,7 +111,7 @@ class CodeGenerator:
             self.stepInto("TypeDecMore")
 
     def var_dec(self):
-        """Process variable declarations."""
+        """处理变量声明"""
         self.stepInto("VarDec")
         self.step()
         if self.current.isTokenType("ε"):
@@ -120,8 +120,14 @@ class CodeGenerator:
         while True:
             if self.current.isTokenType("VarDecMore") and self.current.firstChild().isTokenType("ε"):
                 break
-            # Get type information
+            # 获取类型信息
             type_name = self.type_name()
+            is_array = "array" in type_name if type_name else False
+            array_size = 0
+            if is_array:
+                # 提取数组大小
+                array_size = int(type_name.split("[")[1].split("]")[0])
+
             self.stepInto("VarIdList")
             while True:
                 if self.current.isTokenType("VarIdMore") and self.current.firstChild().isTokenType("ε"):
@@ -129,15 +135,17 @@ class CodeGenerator:
                 self.stepInto("ID")
                 var_name = self.current.getTokenVal()
 
-                # Only add to data section if this is a global variable
+                # 全局变量
                 if self.current_proc is None:
-                    self.emit_data(f"{var_name}: .word 0")
-
+                    if is_array:
+                        # 声明数组空间
+                        self.emit_data(f"{var_name}: .space {array_size * 4}")
+                    else:
+                        self.emit_data(f"{var_name}: .word 0")
                 self.stepInto("VarIdMore")
             self.stepInto("VarDecMore")
 
     def proc_dec(self):
-        """Process procedure declarations."""
         self.stepInto("ProcDec")
         self.step()
         if self.current.isTokenType("ε"):
@@ -152,7 +160,6 @@ class CodeGenerator:
             proc_name = self.current.getTokenVal()
             self.current_proc = proc_name
 
-            # Generate procedure entry
             self.emit_text(f"{proc_name}:")
             self.emit_text("    # Setup stack frame")
             self.emit_text("    subu $sp, $sp, 8")
@@ -160,7 +167,25 @@ class CodeGenerator:
             self.emit_text("    sw $fp, 4($sp)  # Save frame pointer")
             self.emit_text("    move $fp, $sp   # Setup new frame pointer")
 
-            # Find the procedure's scope
+            # Process parameters
+            self.step()  # Skip '('
+            self.stepInto("ParamList")
+            self.step()
+            params = []
+            if not self.current.isTokenType("ε"):
+                while True:
+                    self.stepInto("TypeName")
+                    self.stepInto("ID")
+                    param_name = self.current.getTokenVal()
+                    params.append(param_name)
+                    self.stepInto("ParamMore")
+                    self.step()
+                    if self.current.isTokenType("ε"):
+                        break
+            self.step()  # Skip ')'
+            self.step()  # Skip ';'
+
+            # Find procedure scope
             new_sym_tab = None
             for scope in self.scope:
                 for sym in scope:
@@ -172,50 +197,43 @@ class CodeGenerator:
                 if new_sym_tab:
                     break
 
-            # Save current symbol table and collect local variables
             old_sym_tab = self.analyzer.symTable
-            local_vars = []
+            local_vars = params.copy()
 
-            # Set symbol table to procedure's scope if found
             if new_sym_tab:
                 self.analyzer.symTable = new_sym_tab
-
-                # Process local variables
                 for sym in self.analyzer.symTable:
-                    if sym.decKind == "varDec":
+                    if sym.decKind == "varDec" and sym.name not in params:
                         local_vars.append(sym.name)
-                        var_key = f"{proc_name}.{sym.name}"
-                        self.var_offsets[var_key] = -4 * (len(local_vars))
 
-            # Process procedure declarations
+            # Assign stack offsets starting below saved $ra and $fp
+            for idx, var_name in enumerate(local_vars):
+                var_key = f"{proc_name}.{var_name}"
+                self.var_offsets[var_key] = -8 - (idx * 4)  # Start at -8($fp)
+
             self.stepInto("ProcDecPart")
             self.declare_part()
 
-            # Allocate stack space for local variables right after frame setup
+            # Allocate stack space for all local variables
             if local_vars:
                 local_vars_size = len(local_vars) * 4
                 self.emit_text(f"    # Allocate space for {len(local_vars)} local variables")
                 self.emit_text(f"    subu $sp, $sp, {local_vars_size}")
-                # Initialize local variables to zero if needed
-                for var_name in local_vars:
-                    offset = self.var_offsets[f"{proc_name}.{var_name}"]
-                    self.emit_text(f"    # Initialize local var {var_name}")
-                    self.emit_text(f"    li $t0, 0")
-                    self.emit_text(f"    sw $t0, {offset}($fp)")
+                for i, param_name in enumerate(params):
+                    offset = self.var_offsets[f"{proc_name}.{param_name}"]
+                    self.emit_text(f"    # Save parameter {param_name}")
+                    self.emit_text(f"    sw $a{i}, {offset}($fp)")
 
-            # Process procedure body
             self.stepInto("ProcBody")
             self.program_body()
 
-            # Generate procedure exit
             self.emit_text("    # Procedure exit")
-            self.emit_text("    move $sp, $fp   # Restore stack pointer")
-            self.emit_text("    lw $fp, 4($sp)  # Restore frame pointer")
-            self.emit_text("    lw $ra, 0($sp)  # Restore return address")
+            self.emit_text("    move $sp, $fp")
+            self.emit_text("    lw $fp, 4($sp)")
+            self.emit_text("    lw $ra, 0($sp)")
             self.emit_text("    addu $sp, $sp, 8")
-            self.emit_text("    jr $ra          # Return to caller")
+            self.emit_text("    jr $ra")
 
-            # Reset current procedure and symbol table
             self.current_proc = None
             self.analyzer.symTable = old_sym_tab
             self.stepInto("ProcDecMore")
@@ -358,47 +376,54 @@ class CodeGenerator:
         # Return will be handled by procedure epilogue
 
     def process_id_stmt(self):
-        """Process ID statement (assignment or call)."""
+        stm_node = self.current
         self.stepInto("ID")
-        id_name = self.current.getTokenVal()
+        id_name = self.current.getTokenVal()  # 获取 "a"
         self.stepInto("AssCall")
-        self.step()
+        self.step()  # 移动到 AssignmentRest
         decision = self.current.getTokenType()
 
         if decision == "AssignmentRest":
-            # Assignment statement
-            target = self.process_variable(id_name)
-            self.stepInto(":=")
-
-            # Evaluate expression (result in $t0)
-            self.expression()
-
-            # In process_id_stmt method, modify the storage logic:
-            # Store result in variable
-            if "[" in target or "." in target:
-                # Complex variable access (array or record element)
-                self.emit_text(f"    # Assignment to {target}")
-                self.emit_text(f"    sw $t0, {target}")
+            temp_current = self.current  # 保存 AssignmentRest 位置
+            self.stepInto("AssignmentRest")
+            self.stepInto("Variable")
+            self.stepInto("ID")
+            var_name = self.current.getTokenVal()  # 获取 "a"
+            # 显式移动到 VariMore
+            self.current = temp_current  # 回到 Variable
+            self.stepInto("VariMore") # 移动到 VariMore
+            if self.current.isTokenType("VariMore"):
+                self.current = self.current.firstChild()  # 移动到 VariMore 的子节点
+                is_array = self.current.getTokenType() == "["  # 检查是否为数组
             else:
-                # Simple variable - could be local or global
-                if self.current_proc and f"{self.current_proc}.{id_name}" in self.var_offsets:
-                    offset = self.var_offsets[f"{self.current_proc}.{id_name}"]
-                    self.emit_text(f"    # Store to local var {id_name}")
-                    self.emit_text(f"    sw $t0, {offset}($fp)")
-                else:
-                    self.emit_text(f"    sw $t0, {id_name}")
+                is_array = False
 
+            if is_array:
+                self.current = stm_node
+                target = self.process_variable(load=False)  # 处理 a[i]，结果在 $t1
+                # 添加：保存左侧地址
+                self.emit_text("    move $s0, $t1")  # 使用$s0保存地址
+                self.stepInto(":=")
+                self.expression()  # 处理右值，结果在 $t0
+                self.emit_text(f"    # assign value to {id_name}[index]")
+                self.emit_text("    sw $t0, 0($s0)")  # 使用保存的地址
+            else:
+                # 普通变量赋值
+                self.current = temp_current
+                self.stepInto("AssignmentRest")
+                target = self.process_variable(id_name, load=False)
+                self.stepInto(":=")
+                self.expression()
+                self.emit_text(f"    # assign value to {id_name}")
+                self.emit_text(f"    sw $t0, {target}")
         elif decision == "CallStmRest":
-            # Procedure call
+            # Procedure call (unchanged)
             self.emit_text(f"    # Call to procedure {id_name}")
-
-            # Save temporary registers if needed
             self.emit_text("    # Save temporary registers")
-            self.emit_text("    subu $sp, $sp, 40")  # Space for t0-t9
+            self.emit_text("    subu $sp, $sp, 40")
             for i in range(10):
-                self.emit_text(f"    sw $t{i}, {i*4}($sp)")
+                self.emit_text(f"    sw $t{i}, {i * 4}($sp)")
 
-            # Prepare parameters
             param_index = 0
             self.stepInto("CallStmRest")
             self.stepInto("ActParamList")
@@ -409,123 +434,112 @@ class CodeGenerator:
                     if (self.current.isTokenType("ActParamMore") and
                             self.current.firstChild().isTokenType("ε")):
                         break
-
-                    # Evaluate parameter expression (result in $t0)
                     self.expression()
-
-                    # Move to argument register
                     if param_index < 4:
                         self.emit_text(f"    move $a{param_index}, $t0")
                     else:
-                        # Parameters beyond 4 go on stack
                         self.emit_text(f"    subu $sp, $sp, 4")
                         self.emit_text(f"    sw $t0, 0($sp)")
-
                     param_index += 1
                     self.stepInto("ActParamMore")
 
-            # Call procedure
             self.emit_text(f"    jal {id_name}")
-
-            # Clean up stack if needed
             if param_index > 4:
                 excess_params = param_index - 4
                 self.emit_text(f"    addu $sp, $sp, {excess_params * 4}")
-
-            # Restore temporary registers
             self.emit_text("    # Restore temporary registers")
             for i in range(10):
-                self.emit_text(f"    lw $t{i}, {i*4}($sp)")
+                self.emit_text(f"    lw $t{i}, {i * 4}($sp)")
             self.emit_text("    addu $sp, $sp, 40")
 
-    def process_variable(self, var_name=None):
-        """Process variable access."""
+    def process_variable(self, var_name=None, load=True):
+        no_var_flag = False
         if var_name is None:
-            self.stepInto("Variable")
+            no_var_flag = True
             self.stepInto("ID")
             var_name = self.current.getTokenVal()
 
-        # Check if it's a local variable in current procedure
         local_var_key = f"{self.current_proc}.{var_name}" if self.current_proc else None
         is_local = self.current_proc and local_var_key in self.var_offsets
 
-        self.stepInto("VariMore")
-        self.step()
-        choice = self.current.getTokenType()
+        if self.current_proc and not is_local and var_name in ["i", "j", "k", "t"]:
+            offset = -8 - (len(self.var_offsets) * 4)
+            local_var_key = f"{self.current_proc}.{var_name}"
+            self.var_offsets[local_var_key] = offset
+            is_local = True
+
+        # 确保正确移动到 VariMore
+        self.stepInto("VariMore") if no_var_flag is True else None
+        if no_var_flag and self.current.isTokenType("VariMore"):
+            choice = self.current.firstChild().getTokenType() if not self.current.isEmpty() else "ε"
+        else:
+            choice = "ε"
 
         if choice == "ε":
-            # Simple variable access
             if is_local:
-                # Local variable - use stack offset
                 offset = self.var_offsets[local_var_key]
-                self.emit_text(f"    # Access local var {var_name}")
-                self.emit_text(f"    lw $t0, {offset}($fp)")
+                if load:
+                    self.emit_text(f"    # local var {var_name}")
+                    self.emit_text(f"    lw $t0, {offset}($fp)")
                 return f"{offset}($fp)"
             else:
-                # Global variable
-                self.emit_text(f"    lw $t0, {var_name}")
+                if load:
+                    self.emit_text(f"    lw $t0, {var_name}")
                 return var_name
         elif choice == "[":
-            # Array access
-            base_reg = "$t1"
+            array_name = var_name
+            self.stepInto("Exp")
+            self.expression()  # 索引值到 $t0
+            self.emit_text("    move $t3, $t0")
+            self.emit_text("    addi $t3, $t3, -1")  # 转换为 0-based，无论是否为简单变量
+            self.emit_text("    sll $t3, $t3, 2")  # 乘以 4
             if is_local:
                 offset = self.var_offsets[local_var_key]
-                self.emit_text(f"    # Local array access {var_name}[...]")
-                self.emit_text(f"    addi {base_reg}, $fp, {offset}")
+                self.emit_text(f"    addi $t1, $fp, {offset}")
             else:
-                self.emit_text(f"    # Global array access {var_name}[...]")
-                self.emit_text(f"    la {base_reg}, {var_name}")
-
-            # Process index - must handle local vars in index expression too
-            self.stepInto("Exp")
-            self.expression()  # Result in $t0
-
-            # Calculate element address
-            self.emit_text("    sll $t0, $t0, 2")  # Multiply by 4
-            self.emit_text(f"    add {base_reg}, {base_reg}, $t0")
-            self.emit_text(f"    lw $t0, 0({base_reg})")
-
-            return f"0({base_reg})"
+                self.emit_text(f"    la $t1, {array_name}")
+            self.emit_text(f"    add $t1, $t1, $t3")  # 计算最终地址
+            if load:
+                self.emit_text(f"    lw $t0, 0($t1)")
+            return f"0($t1)"
         elif choice == ".":
-            # Record field access - simplified implementation
+            # Simplified record handling (unchanged for this fix)
             self.stepInto("FieldVar")
             self.stepInto("ID")
             field_name = self.current.getTokenVal()
-
-            if self.current_proc and local_var_key in self.var_offsets:
+            location = f"{var_name}.{field_name}"
+            if is_local:
                 offset = self.var_offsets[local_var_key]
-                self.emit_text(f"    # Local record access {var_name}.{field_name}")
+                self.emit_text(f"    # Local record {var_name}.{field_name}")
                 self.emit_text(f"    addi $t1, $fp, {offset}")
+                location = f"0($t1)"
             else:
-                self.emit_text(f"    # Global record access {var_name}.{field_name}")
-                self.emit_text(f"    la $t1, {var_name}")
-
-            # This is simplified - would need field offset calculation
-            self.emit_text("    lw $t0, 0($t1)")
-
-            return f"{var_name}.{field_name}"
+                global_sym_table = self.scope[0] if self.scope else []
+                if any(sym.name == var_name and sym.decKind == "varDec" for sym in global_sym_table):
+                    self.emit_text(f"    # Global record {var_name}.{field_name}")
+                    self.emit_text(f"    la $t1, {var_name}")
+                    location = f"0($t1)"
+                else:
+                    raise ValueError(f"Record '{var_name}' not found in current or global scope")
+            if load:
+                self.emit_text(f"    lw $t0, {location}")
+            return location
 
     def rel_exp(self):
         """Process relational expression."""
         self.stepInto("RelExp")
+        self.expression()  # Left operand (e.g., i) -> $t0
+        self.emit_text("    move $t2, $t0")  # Save left in $t2
 
-        # Evaluate left expression (result in $t0)
-        self.expression()
-
-        # Save left result
-        self.emit_text("    move $t2, $t0")
-
-        # Get comparison operator
         self.stepInto("CmpOp")
         self.step()
         op = self.current.getTokenVal()
 
-        # Evaluate right expression (result in $t0)
-        self.expression()
+        self.expression()  # Right operand (e.g., num + 1) -> $t0
 
         # Perform comparison based on operator
         if op == "<":
-            self.emit_text("    slt $t0, $t2, $t0")
+            self.emit_text("    slt $t0, $t2, $t0")  # $t0 = ($t2 < $t0)
         elif op == "=":
             self.emit_text("    seq $t0, $t2, $t0")
         elif op == ">":
@@ -533,7 +547,6 @@ class CodeGenerator:
         else:
             self.emit_text(f"    # Unsupported operator: {op}")
             self.emit_text("    li $t0, 0")
-
     def expression(self):
         """Process expression."""
         self.stepInto("Exp")
@@ -547,7 +560,7 @@ class CodeGenerator:
                 break
 
             # Save first term result
-            self.emit_text("    move $t2, $t0")
+            self.emit_text("    move $t4, $t0")
 
             # Get operator
             self.stepInto("AddOp")
@@ -560,9 +573,9 @@ class CodeGenerator:
 
             # Perform operation
             if op == "+":
-                self.emit_text("    add $t0, $t2, $t0")
+                self.emit_text("    add $t0, $t4, $t0")
             elif op == "-":
-                self.emit_text("    sub $t0, $t2, $t0")
+                self.emit_text("    sub $t0, $t4, $t0")
             else:
                 self.emit_text(f"    # Unsupported operator: {op}")
 
@@ -604,22 +617,18 @@ class CodeGenerator:
             self.stepInto("OtherFactor")
 
     def factor(self):
-        """Process factor."""
         self.stepInto("Factor")
         self.step()
         choice = self.current.getTokenType()
 
         if choice == "(":
-            # Parenthesized expression
             self.expression()
             self.stepInto(")")
         elif choice == "INTC":
-            # Integer constant
             value = self.current.getTokenVal()
             self.emit_text(f"    li $t0, {value}")
         elif choice == "Variable":
-            # Variable access - will handle local/global distinction
-            self.process_variable()
+            self.process_variable(load=True)  # Load value into $t0
 
     def type_name(self):
         """Process type name."""

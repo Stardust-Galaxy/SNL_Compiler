@@ -1,9 +1,9 @@
 .data
 newline: .asciiz "\n"
-z: .word 0
-x: .word 0
+i: .word 0
+j: .word 0
 num: .word 0
-a: .word 0
+a: .space 80
 
 
 .text
@@ -17,114 +17,141 @@ q:
     sw $ra, 0($sp)  # Save return address
     sw $fp, 4($sp)  # Save frame pointer
     move $fp, $sp   # Setup new frame pointer
-    lw $t0, i
+    # Allocate space for 1 local variables
+    subu $sp, $sp, 4
+    # Save parameter num
+    sw $a0, -8($fp)
     li $t0, 1
-    sw $t0, i
+    # assign value to i
+    sw $t0, -12($fp)
 L0:
-    lw $t0, i
+    # local var i
+    lw $t0, -12($fp)
     move $t2, $t0
-    lw $t0, num
+    # local var num
+    lw $t0, -8($fp)
     slt $t0, $t2, $t0
     beqz $t0, L1
-    lw $t0, j
-    lw $t0, num
-    move $t2, $t0
-    lw $t0, i
-    sub $t0, $t2, $t0
-    move $t2, $t0
+    # local var num
+    lw $t0, -8($fp)
+    move $t4, $t0
+    # local var i
+    lw $t0, -12($fp)
+    sub $t0, $t4, $t0
+    move $t4, $t0
     li $t0, 1
-    add $t0, $t2, $t0
-    sw $t0, j
-    lw $t0, k
+    add $t0, $t4, $t0
+    # assign value to j
+    sw $t0, -16($fp)
     li $t0, 1
-    sw $t0, k
+    # assign value to k
+    sw $t0, -20($fp)
 L2:
-    lw $t0, k
+    # local var k
+    lw $t0, -20($fp)
     move $t2, $t0
-    lw $t0, j
+    # local var j
+    lw $t0, -16($fp)
     slt $t0, $t2, $t0
     beqz $t0, L3
-    # Global array access a[...]
-    la $t1, a
-    lw $t0, k
-    move $t2, $t0
+    # local var k
+    lw $t0, -20($fp)
+    move $t4, $t0
     li $t0, 1
-    add $t0, $t2, $t0
-    sll $t0, $t0, 2
-    add $t1, $t1, $t0
+    add $t0, $t4, $t0
+    move $t3, $t0
+    addi $t3, $t3, -1
+    sll $t3, $t3, 2
+    la $t1, a
+    add $t1, $t1, $t3
     lw $t0, 0($t1)
     move $t2, $t0
-    # Global array access a[...]
+    # local var k
+    lw $t0, -20($fp)
+    move $t3, $t0
+    addi $t3, $t3, -1
+    sll $t3, $t3, 2
     la $t1, a
-    lw $t0, k
-    sll $t0, $t0, 2
-    add $t1, $t1, $t0
+    add $t1, $t1, $t3
     lw $t0, 0($t1)
     slt $t0, $t2, $t0
     beqz $t0, L4
-    lw $t0, t
-    # Global array access a[...]
+    # local var k
+    lw $t0, -20($fp)
+    move $t3, $t0
+    addi $t3, $t3, -1
+    sll $t3, $t3, 2
     la $t1, a
-    lw $t0, k
-    sll $t0, $t0, 2
-    add $t1, $t1, $t0
+    add $t1, $t1, $t3
     lw $t0, 0($t1)
-    sw $t0, t
-    # Global array access a[...]
+    # assign value to t
+    sw $t0, -24($fp)
+    # local var k
+    lw $t0, -20($fp)
+    move $t3, $t0
+    addi $t3, $t3, -1
+    sll $t3, $t3, 2
     la $t1, a
-    lw $t0, k
-    sll $t0, $t0, 2
-    add $t1, $t1, $t0
-    lw $t0, 0($t1)
-    # Global array access a[...]
-    la $t1, a
-    lw $t0, k
-    move $t2, $t0
+    add $t1, $t1, $t3
+    move $s0, $t1
+    # local var k
+    lw $t0, -20($fp)
+    move $t4, $t0
     li $t0, 1
-    add $t0, $t2, $t0
-    sll $t0, $t0, 2
-    add $t1, $t1, $t0
-    lw $t0, 0($t1)
-    sw $t0, a
-    # Global array access a[...]
+    add $t0, $t4, $t0
+    move $t3, $t0
+    addi $t3, $t3, -1
+    sll $t3, $t3, 2
     la $t1, a
-    lw $t0, k
-    move $t2, $t0
-    li $t0, 1
-    add $t0, $t2, $t0
-    sll $t0, $t0, 2
-    add $t1, $t1, $t0
+    add $t1, $t1, $t3
     lw $t0, 0($t1)
-    lw $t0, t
-    sw $t0, a
+    # assign value to a[index]
+    sw $t0, 0($s0)
+    # local var k
+    lw $t0, -20($fp)
+    move $t4, $t0
+    li $t0, 1
+    add $t0, $t4, $t0
+    move $t3, $t0
+    addi $t3, $t3, -1
+    sll $t3, $t3, 2
+    la $t1, a
+    add $t1, $t1, $t3
+    move $s0, $t1
+    # local var t
+    lw $t0, -24($fp)
+    # assign value to a[index]
+    sw $t0, 0($s0)
     j L5
 L4:
-    lw $t0, t
     li $t0, 0
-    sw $t0, t
+    # assign value to t
+    sw $t0, -24($fp)
 L5:
-    lw $t0, k
-    lw $t0, k
-    move $t2, $t0
+    # local var k
+    lw $t0, -20($fp)
+    move $t4, $t0
     li $t0, 1
-    add $t0, $t2, $t0
-    sw $t0, k
+    add $t0, $t4, $t0
+    # assign value to k
+    sw $t0, -20($fp)
     j L2
 L3:
-    lw $t0, i
-    lw $t0, i
-    move $t2, $t0
+    # local var i
+    lw $t0, -12($fp)
+    move $t4, $t0
     li $t0, 1
-    add $t0, $t2, $t0
-    sw $t0, i
+    add $t0, $t4, $t0
+    # assign value to i
+    sw $t0, -12($fp)
     j L0
 L1:
     # Procedure exit
-    move $sp, $fp   # Restore stack pointer
-    lw $fp, 4($sp)  # Restore frame pointer
-    lw $ra, 0($sp)  # Restore return address
+    move $sp, $fp
+    lw $fp, 4($sp)
+    lw $ra, 0($sp)
     addu $sp, $sp, 8
-    jr $ra          # Return to caller
+    jr $ra
 main:
     # Setup stack frame
     subu $sp, $sp, 4
@@ -133,33 +160,38 @@ main:
     li $v0, 5
     syscall
     sw $v0, num
-    lw $t0, z
     li $t0, 1
-    sw $t0, z
+    # assign value to i
+    sw $t0, i
 L6:
-    lw $t0, z
+    lw $t0, i
     move $t2, $t0
     lw $t0, num
+    move $t4, $t0
+    li $t0, 1
+    add $t0, $t4, $t0
     slt $t0, $t2, $t0
     beqz $t0, L7
     # Read integer input
     li $v0, 5
     syscall
-    sw $v0, x
-    # Global array access a[...]
+    sw $v0, j
+    lw $t0, i
+    move $t3, $t0
+    addi $t3, $t3, -1
+    sll $t3, $t3, 2
     la $t1, a
-    lw $t0, z
-    sll $t0, $t0, 2
-    add $t1, $t1, $t0
-    lw $t0, 0($t1)
-    lw $t0, x
-    sw $t0, a
-    lw $t0, z
-    lw $t0, z
-    move $t2, $t0
+    add $t1, $t1, $t3
+    move $s0, $t1
+    lw $t0, j
+    # assign value to a[index]
+    sw $t0, 0($s0)
+    lw $t0, i
+    move $t4, $t0
     li $t0, 1
-    add $t0, $t2, $t0
-    sw $t0, z
+    add $t0, $t4, $t0
+    # assign value to i
+    sw $t0, i
     j L6
 L7:
     # Call to procedure q
@@ -190,20 +222,24 @@ L7:
     lw $t8, 32($sp)
     lw $t9, 36($sp)
     addu $sp, $sp, 40
-    lw $t0, z
     li $t0, 1
-    sw $t0, z
+    # assign value to i
+    sw $t0, i
 L8:
-    lw $t0, z
+    lw $t0, i
     move $t2, $t0
     lw $t0, num
+    move $t4, $t0
+    li $t0, 1
+    add $t0, $t4, $t0
     slt $t0, $t2, $t0
     beqz $t0, L9
-    # Global array access a[...]
+    lw $t0, i
+    move $t3, $t0
+    addi $t3, $t3, -1
+    sll $t3, $t3, 2
     la $t1, a
-    lw $t0, z
-    sll $t0, $t0, 2
-    add $t1, $t1, $t0
+    add $t1, $t1, $t3
     lw $t0, 0($t1)
     # Write integer output
     move $a0, $t0
@@ -212,12 +248,12 @@ L8:
     la $a0, newline
     li $v0, 4
     syscall
-    lw $t0, z
-    lw $t0, z
-    move $t2, $t0
+    lw $t0, i
+    move $t4, $t0
     li $t0, 1
-    add $t0, $t2, $t0
-    sw $t0, z
+    add $t0, $t4, $t0
+    # assign value to i
+    sw $t0, i
     j L8
 L9:
     # Program exit

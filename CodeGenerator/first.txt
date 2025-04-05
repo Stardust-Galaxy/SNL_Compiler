@@ -1,19 +1,19 @@
-ActParamList	{'ID', '¦Å', 'INTC', '('}
+ActParamList	{'¦Å', 'ID', 'INTC', '('}
 ActParamMore	{'¦Å', ','}
 AddOp	{'-', '+'}
 ArrayType	{'ARRAY'}
-AssCall	{'.', '(', ':=', '['}
-AssignmentRest	{'.', ':=', '['}
-BaseType	{'INTEGER', 'CHAR'}
+AssCall	{':=', '(', '[', '.'}
+AssignmentRest	{':=', '[', '.'}
+BaseType	{'CHAR', 'INTEGER'}
 CallStmRest	{'('}
 CmpOp	{'<', '='}
 ConditionalStm	{'IF'}
-DeclarePart	{'VAR', '¦Å', 'PROCEDURE', 'TYPE'}
+DeclarePart	{'PROCEDURE', 'TYPE', '¦Å', 'VAR'}
 Exp	{'ID', 'INTC', '('}
 Factor	{'ID', 'INTC', '('}
 FidMore	{'¦Å', ','}
-FieldDecList	{'INTEGER', 'CHAR', 'ARRAY'}
-FieldDecMore	{'INTEGER', '¦Å', 'CHAR', 'ARRAY'}
+FieldDecList	{'CHAR', 'INTEGER', 'ARRAY'}
+FieldDecMore	{'CHAR', '¦Å', 'INTEGER', 'ARRAY'}
 FieldVar	{'ID'}
 FieldVarMore	{'¦Å', '['}
 FormList	{'ID'}
@@ -26,16 +26,16 @@ Low	{'INTC'}
 MultOp	{'*', '/'}
 OtherFactor	{'¦Å', '*', '/'}
 OtherRelE	{'<', '='}
-OtherTerm	{'¦Å', '-', '+'}
+OtherTerm	{'¦Å', '+', '-'}
 OutputStm	{'WRITE'}
-Param	{'RECORD', 'VAR', 'ID', 'CHAR', 'INTEGER', 'ARRAY'}
-ParamDecList	{'RECORD', 'VAR', 'CHAR', 'ID', 'INTEGER', 'ARRAY'}
-ParamList	{'RECORD', 'VAR', '¦Å', 'ID', 'CHAR', 'INTEGER', 'ARRAY'}
+Param	{'VAR', 'RECORD', 'CHAR', 'ID', 'INTEGER', 'ARRAY'}
+ParamDecList	{'VAR', 'RECORD', 'CHAR', 'ID', 'INTEGER', 'ARRAY'}
+ParamList	{'VAR', 'INTEGER', 'RECORD', 'CHAR', '¦Å', 'ID', 'ARRAY'}
 ParamMore	{';', '¦Å'}
 ProcBody	{'BEGIN'}
-ProcDec	{'¦Å', 'PROCEDURE'}
-ProcDecMore	{'¦Å', 'PROCEDURE'}
-ProcDecPart	{'VAR', '¦Å', 'PROCEDURE', 'TYPE'}
+ProcDec	{'PROCEDURE', '¦Å'}
+ProcDecMore	{'PROCEDURE', '¦Å'}
+ProcDecPart	{'PROCEDURE', '¦Å', 'VAR', 'TYPE'}
 ProcDeclaration	{'PROCEDURE'}
 ProcName	{'ID'}
 Program	{'PROGRAM'}
@@ -43,25 +43,25 @@ ProgramBody	{'BEGIN'}
 ProgramHead	{'PROGRAM'}
 ProgramName	{'ID'}
 RecType	{'RECORD'}
-RelExp	{'INTC', 'ID', '('}
+RelExp	{'(', 'ID', 'INTC'}
 ReturnStm	{'RETURN'}
-Stm	{'WHILE', 'READ', 'ID', 'IF', 'WRITE', 'RETURN'}
-StmList	{'WHILE', 'READ', 'ID', 'IF', 'WRITE', 'RETURN'}
+Stm	{'RETURN', 'IF', 'WHILE', 'ID', 'READ', 'WRITE'}
+StmList	{'RETURN', 'IF', 'WHILE', 'ID', 'READ', 'WRITE'}
 StmMore	{';', '¦Å'}
-StructureType	{'RECORD', 'ARRAY'}
-Term	{'INTC', 'ID', '('}
+StructureType	{'ARRAY', 'RECORD'}
+Term	{'(', 'ID', 'INTC'}
 Top	{'INTC'}
-TypeDec	{'¦Å', 'TYPE'}
+TypeDec	{'TYPE', '¦Å'}
 TypeDecList	{'ID'}
 TypeDecMore	{'¦Å', 'ID'}
 TypeDeclaration	{'TYPE'}
 TypeId	{'ID'}
 TypeName	{'RECORD', 'CHAR', 'ID', 'INTEGER', 'ARRAY'}
-VarDec	{'VAR', '¦Å'}
-VarDecList	{'RECORD', 'ID', 'CHAR', 'INTEGER', 'ARRAY'}
-VarDecMore	{'RECORD', '¦Å', 'CHAR', 'ID', 'INTEGER', 'ARRAY'}
+VarDec	{'¦Å', 'VAR'}
+VarDecList	{'RECORD', 'CHAR', 'ID', 'INTEGER', 'ARRAY'}
+VarDecMore	{'INTEGER', 'RECORD', 'CHAR', '¦Å', 'ID', 'ARRAY'}
 VarDeclaration	{'VAR'}
 VarIdList	{'ID'}
 VarIdMore	{'¦Å', ','}
-VariMore	{'.', '¦Å', '['}
+VariMore	{'¦Å', '[', '.'}
 Variable	{'ID'}

@@ -15,11 +15,11 @@ Program
                           |- BaseType  
                                |- INTEGER  integer
                      |- VarIdList  
-                          |- ID  z
+                          |- ID  i
                           |- VarIdMore  
                                |- ,  ,
                                |- VarIdList  
-                                    |- ID  x
+                                    |- ID  j
                                     |- VarIdMore  
                                          |- ,  ,
                                          |- VarIdList  
@@ -636,7 +636,7 @@ Program
                 |- ;  ;
                 |- StmList  
                      |- Stm  
-                          |- ID  z
+                          |- ID  i
                           |- AssCall  
                                |- AssignmentRest  
                                     |- VariMore  
@@ -664,7 +664,7 @@ Program
                                                    |- Term  
                                                         |- Factor  
                                                              |- Variable  
-                                                                  |- ID  z
+                                                                  |- ID  i
                                                                   |- VariMore  
                                                                        |- ε  
                                                                             |- ε  ε
@@ -680,11 +680,32 @@ Program
                                                    |- Exp  
                                                         |- Term  
                                                              |- Factor  
-                                                                  |- Variable  
-                                                                       |- ID  num
-                                                                       |- VariMore  
-                                                                            |- ε  
-                                                                                 |- ε  ε
+                                                                  |- (  (
+                                                                  |- Exp  
+                                                                       |- Term  
+                                                                            |- Factor  
+                                                                                 |- Variable  
+                                                                                      |- ID  num
+                                                                                      |- VariMore  
+                                                                                           |- ε  
+                                                                                                |- ε  ε
+                                                                            |- OtherFactor  
+                                                                                 |- ε  
+                                                                                      |- ε  ε
+                                                                       |- OtherTerm  
+                                                                            |- AddOp  
+                                                                                 |- +  +
+                                                                            |- Exp  
+                                                                                 |- Term  
+                                                                                      |- Factor  
+                                                                                           |- INTC  1
+                                                                                      |- OtherFactor  
+                                                                                           |- ε  
+                                                                                                |- ε  ε
+                                                                                 |- OtherTerm  
+                                                                                      |- ε  
+                                                                                           |- ε  ε
+                                                                  |- )  )
                                                              |- OtherFactor  
                                                                   |- ε  
                                                                        |- ε  ε
@@ -698,7 +719,7 @@ Program
                                                         |- READ  read
                                                         |- (  (
                                                         |- Invar  
-                                                             |- ID  x
+                                                             |- ID  j
                                                         |- )  )
                                               |- StmMore  
                                                    |- ;  ;
@@ -713,7 +734,7 @@ Program
                                                                                  |- Term  
                                                                                       |- Factor  
                                                                                            |- Variable  
-                                                                                                |- ID  z
+                                                                                                |- ID  i
                                                                                                 |- VariMore  
                                                                                                      |- ε  
                                                                                                           |- ε  ε
@@ -729,7 +750,7 @@ Program
                                                                             |- Term  
                                                                                  |- Factor  
                                                                                       |- Variable  
-                                                                                           |- ID  x
+                                                                                           |- ID  j
                                                                                            |- VariMore  
                                                                                                 |- ε  
                                                                                                      |- ε  ε
@@ -743,7 +764,7 @@ Program
                                                              |- ;  ;
                                                              |- StmList  
                                                                   |- Stm  
-                                                                       |- ID  z
+                                                                       |- ID  i
                                                                        |- AssCall  
                                                                             |- AssignmentRest  
                                                                                  |- VariMore  
@@ -754,7 +775,7 @@ Program
                                                                                       |- Term  
                                                                                            |- Factor  
                                                                                                 |- Variable  
-                                                                                                     |- ID  z
+                                                                                                     |- ID  i
                                                                                                      |- VariMore  
                                                                                                           |- ε  
                                                                                                                |- ε  ε
@@ -809,7 +830,7 @@ Program
                                               |- ;  ;
                                               |- StmList  
                                                    |- Stm  
-                                                        |- ID  z
+                                                        |- ID  i
                                                         |- AssCall  
                                                              |- AssignmentRest  
                                                                   |- VariMore  
@@ -837,7 +858,7 @@ Program
                                                                                  |- Term  
                                                                                       |- Factor  
                                                                                            |- Variable  
-                                                                                                |- ID  z
+                                                                                                |- ID  i
                                                                                                 |- VariMore  
                                                                                                      |- ε  
                                                                                                           |- ε  ε
@@ -853,11 +874,32 @@ Program
                                                                                  |- Exp  
                                                                                       |- Term  
                                                                                            |- Factor  
-                                                                                                |- Variable  
-                                                                                                     |- ID  num
-                                                                                                     |- VariMore  
-                                                                                                          |- ε  
-                                                                                                               |- ε  ε
+                                                                                                |- (  (
+                                                                                                |- Exp  
+                                                                                                     |- Term  
+                                                                                                          |- Factor  
+                                                                                                               |- Variable  
+                                                                                                                    |- ID  num
+                                                                                                                    |- VariMore  
+                                                                                                                         |- ε  
+                                                                                                                              |- ε  ε
+                                                                                                          |- OtherFactor  
+                                                                                                               |- ε  
+                                                                                                                    |- ε  ε
+                                                                                                     |- OtherTerm  
+                                                                                                          |- AddOp  
+                                                                                                               |- +  +
+                                                                                                          |- Exp  
+                                                                                                               |- Term  
+                                                                                                                    |- Factor  
+                                                                                                                         |- INTC  1
+                                                                                                                    |- OtherFactor  
+                                                                                                                         |- ε  
+                                                                                                                              |- ε  ε
+                                                                                                               |- OtherTerm  
+                                                                                                                    |- ε  
+                                                                                                                         |- ε  ε
+                                                                                                |- )  )
                                                                                            |- OtherFactor  
                                                                                                 |- ε  
                                                                                                      |- ε  ε
@@ -881,7 +923,7 @@ Program
                                                                                                                     |- Term  
                                                                                                                          |- Factor  
                                                                                                                               |- Variable  
-                                                                                                                                   |- ID  z
+                                                                                                                                   |- ID  i
                                                                                                                                    |- VariMore  
                                                                                                                                         |- ε  
                                                                                                                                              |- ε  ε
@@ -903,7 +945,7 @@ Program
                                                                                  |- ;  ;
                                                                                  |- StmList  
                                                                                       |- Stm  
-                                                                                           |- ID  z
+                                                                                           |- ID  i
                                                                                            |- AssCall  
                                                                                                 |- AssignmentRest  
                                                                                                      |- VariMore  
@@ -914,7 +956,7 @@ Program
                                                                                                           |- Term  
                                                                                                                |- Factor  
                                                                                                                     |- Variable  
-                                                                                                                         |- ID  z
+                                                                                                                         |- ID  i
                                                                                                                          |- VariMore  
                                                                                                                               |- ε  
                                                                                                                                    |- ε  ε

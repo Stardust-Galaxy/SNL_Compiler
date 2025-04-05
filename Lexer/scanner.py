@@ -102,9 +102,9 @@ def Scan(scanner):
 
 
 if __name__ == '__main__':
-    scanner = list(open("../CodeGenerator/testalltwo.txt", "r").read())
+    scanner = list(open("../CodeGenerator/bubble.txt", "r").read())
     tokens = Scan(scanner)
-    out = open("testalltwo-Lexer.txt", "w")
+    out = open("bubble-Lexer.txt", "w")
     for i in tokens:
         out.write(str(i) + "\n")
     out.close()
